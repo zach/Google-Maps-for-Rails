@@ -50,6 +50,8 @@ class @Gmaps.Google.Builders.Marker extends Gmaps.Objects.BaseBuilder
 
   create_infowindow_on_click: ->
     @addListener 'click', @infowindow_binding
+    @addListener 'activation', @infowindow_activation_binding
+    @addListener 'deactivation', @infowindow_deactivation_binding
 
   infowindow_binding: =>
     @constructor.CURRENT_INFOWINDOW.close() if @_should_close_infowindow()
@@ -61,6 +63,19 @@ class @Gmaps.Google.Builders.Marker extends Gmaps.Objects.BaseBuilder
     @infowindow.open( @getServiceObject().getMap(), @getServiceObject())
     @marker.infowindow ?= @infowindow
     @constructor.CURRENT_INFOWINDOW = @infowindow
+
+  infowindow_activation_binding: =>
+    @constructor.CURRENT_INFOWINDOW.close() if @_should_close_infowindow()
+    @infowindow ?= @create_infowindow()
+
+    return unless @infowindow?
+
+    @infowindow.open( @getServiceObject().getMap(), @getServiceObject())
+    @marker.infowindow ?= @infowindow
+    @constructor.CURRENT_INFOWINDOW = @infowindow
+
+  infowindow_deactivation_binding: =>
+    @constructor.CURRENT_INFOWINDOW.close() if @_should_close_infowindow()
 
   _get_picture: (picture_name)->
     return null if !_.isObject(@args[picture_name]) || !_.isString(@args[picture_name].url)
